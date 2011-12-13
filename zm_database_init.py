@@ -22,6 +22,13 @@ ZM_PATH ="/usr/share/zm" # path to zm shared dir
 ZM_CONFIG = "/etc/zm.conf"
 ########## /important settings ###############
 
+class ZmConfigError(Exception):
+  def __init__(self, value):
+    self.value = value
+  def __str__(self):
+    return repr(self.value)
+  
+
 class ZmConfigFileHandler:
   """ Handler for reading writing and checking ZoneMinder configuration files """
   def __init__(self, filename = ""):
@@ -69,7 +76,7 @@ class ZmConfigFileHandler:
       if what:
         return what.group(1).strip()
     
-    raise NameError("Option not found: " + option)
+    raise ZmConfigError("Option not found: " + option)
   
   @staticmethod
   def _lineWithoutComment(line):
@@ -139,7 +146,9 @@ class UserPrompt:
   
 def initializeDatabase(database_host):
   """ The main execute """
-  pass
+  zmcfg = ZmConfigFileHandler("zm.conf")
+  zmcfg.readConfigFile()
+  print zmcfg.readOptionValue("ZM_VERSION")
     
 def main():
   parser = argparse.ArgumentParser(description = "Handles Database installation and update for ZoneMinder Installations")
@@ -151,6 +160,7 @@ def main():
 
   args = parser.parse_args()
   prompt = UserPrompt(args.non_interactive)
+  database_host = args.mysql_host
   
   try:
     print "INFO: when db is correctly installed and you just reinstalled rpm, then answer all questions with 'n'"
@@ -164,15 +174,15 @@ def main():
   except RuntimeError as e:
     print e
     print "exiting"
-    sys.exit(0)
+    sys.exit(1)
+  
+  except ZmConfigError as e:
+    print "Error", e
+    sys.exit(1)
   
   except KeyboardInterrupt:
     print "Interrupted exiting"
     sys.exit(0)
-  
-  zmcfg = ZmConfigFileHandler("zm.conf")
-  zmcfg.readConfigFile()
-  print zmcfg.readOptionValue("ZM_VERSION")
   
 
 if __name__ == "__main__":
