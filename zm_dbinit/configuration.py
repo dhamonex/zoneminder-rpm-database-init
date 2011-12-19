@@ -11,7 +11,7 @@ class Configuration:
   
   def __init__(self, filename):
     self.filename = filename
-    self.config = ConfigParser.SafeConfigParser
+    self.config = ConfigParser.SafeConfigParser()
     self.configModified = False
     
     self.readConfiguration()
@@ -20,31 +20,34 @@ class Configuration:
     return self
   
   def readConfiguration(self):
-    self.config.read(filename)
+    self.config.read(self.filename)
   
   def zmLockFile(self):
-    return self.config.get(ZmSection, "lock-file")
+    return self.config.get(Configuration.ZmSection, "lock-file")
   
   def zmPath(self):
-    return self.config.get(ZmSection, "data-install-path")
+    return self.config.get(Configuration.ZmSection, "data-install-path")
   
   def zmConfigFile(self):
-    return self.config.get(ZmSection, "configuration-file")
+    return self.config.get(Configuration.ZmSection, "configuration-file")
   
   def databaseInitialized(self):
-    self.config.getboolean(MySection, "database-initialized")
+    self.config.getboolean(Configuration.MySection, "database-initialized")
   
   def setDatabaseInitialized(self, initialized):
     self.config.set(MySection, "database-initialized", initialized)
     self.configModified = True
   
   def rootUserCheck(self):
-    return self.config.getboolean(MySection, "allow-execution-only-as-root")
+    return self.config.getboolean(Configuration.MySection, "allow-execution-only-as-root")
   
   def mysqlHost(self):
-    return self.config.get(MySection, "mysql-host")
+    return self.config.get(Configuration.MySection, "mysql-host")
   
   def setMysqlHost(self, hostname):
+    if self.mysqlHost() == hostname:
+      return
+    
     self.config.set(MySection, "mysql-host", hostname)
     self.configModified = True
   
@@ -55,7 +58,7 @@ class Configuration:
       
       self.configModified = False
   
-  def __exit__(self):
+  def __exit__(self, type, value, traceback):
     self.checkConfigUpdate()
   
   def __del__(self):

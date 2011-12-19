@@ -9,24 +9,16 @@
 #
 # Please submit bugfixes or comments to monex@liquid-co.de
 
-import os.path, os
+import os.path, os, sys
 import argparse
 
 from zm_dbinit.userprompt import UserPrompt
 from zm_dbinit.zm_config_reader import ZmConfigError, ZmConfigFileHandler
-
-########## important settings ################
-VERSION = "1.25.0"# current version of zm
-
-ZM_PATH ="/usr/share/zm" # path to zm shared dir
-
-ZM_CONFIG = "/etc/zm.conf"
-########## /important settings ###############
-    
+from zm_dbinit.configuration import *
   
-def initializeDatabase(database_host):
+def initializeDatabase(config):
   """ The main execute """
-  zmcfg = ZmConfigFileHandler("zm.conf")
+  zmcfg = ZmConfigFileHandler(config.zmConfigFile())
   zmcfg.readConfigFile()
   print zmcfg.readOptionValue("ZM_VERSION")
     
@@ -43,30 +35,34 @@ def main():
 
   args = parser.parse_args()
   prompt = UserPrompt(args.non_interactive)
-  database_host = args.mysql_host
   
   try:
     print "INFO: when db is correctly installed and you just reinstalled rpm, then answer all questions with 'n'"
-  
-    if os.path.isfile(ZM_PATH + "/lock"):
-      run_stuff(database_host)
-    else:
-      if prompt.okToContinue("no lockfile found, proceed anyway?", False):
-        initializeDatabase(database_host)
-  
-  except RuntimeError as e:
-    print e
-    print "exiting"
-    sys.exit(1)
+    
+    with Configuration(args.config_file) as config:
+      config.setMysqlHost(args.mysql_host)
+      
+      if os.path.isfile(config.zmLockFile()):
+        run_stuff(database_host)
+      else:
+        if prompt.okToContinue("no lockfile found, proceed anyway?", False):
+          initializeDatabase(config)
   
   except ZmConfigError as e:
-    print "Error", e
+    print "Error in ZoneMinder configuration file: ", e
     sys.exit(1)
+  
+  except ConfigParser.Error as e:
+    print "Error in cofniguration file:", e
+    sys.exit(2)
   
   except KeyboardInterrupt:
     print "Interrupted exiting"
     sys.exit(0)
   
-
+  except Exception as e:
+    print "Error: ", e
+    sys.exit(3)
+  
 if __name__ == "__main__":
   main()
