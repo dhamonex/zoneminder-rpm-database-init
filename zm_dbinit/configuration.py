@@ -16,6 +16,9 @@ class Configuration:
     
     self.readConfiguration()
   
+  def __enter__(self):
+    return self
+  
   def readConfiguration(self):
     self.config.read(filename)
   
@@ -49,6 +52,11 @@ class Configuration:
     if self.configModified:
       with open(self.filename, "w") as f:
         self.config.write(f)
+      
+      self.configModified = False
+  
+  def __exit__(self):
+    self.checkConfigUpdate()
   
   def __del__(self):
     self.checkConfigUpdate()
