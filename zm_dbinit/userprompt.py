@@ -52,3 +52,10 @@ class UserPrompt:
       raise RuntimeError("Too many user interaction errors")
     
     return passwd
+    
+  def askForUserData(self, text):
+    if self.non_interactive:
+      raise RuntimeError("Asking for password is not allowed in non interactive mode!!")
+    
+    return raw_input(text + ": ")
+    
