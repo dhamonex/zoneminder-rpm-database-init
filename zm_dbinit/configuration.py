@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 import ConfigParser
+import os.path
 
 class Configuration:
   """ Configuration reader and writer for zm_database_init script """
@@ -20,7 +21,25 @@ class Configuration:
     return self
   
   def readConfiguration(self):
-    self.config.read(self.filename)
+    if os.path.isfile(self.filename):
+      self.config.read(self.filename)
+    else:
+      self.setDefaults()
+  
+  def setDefaults(self):
+    self.config.add_section(Configuration.MySection)
+    self.config.set(Configuration.MySection, "database-initialized", "no")
+    self.config.set(Configuration.MySection, "allow-execution-only-as-root", "yes")
+    self.config.set(Configuration.MySection, "mysql-host", "localhost")
+    self.config.set(Configuration.MySection, "mysql-bin", "/usr/bin/mysql")
+    
+    
+    self.config.add_section(Configuration.ZmSection)
+    self.config.set(Configuration.ZmSection, "lock-file", "/usr/share/zm/lock")
+    self.config.set(Configuration.ZmSection, "data-install-path", "/usr/share/zm")
+    self.config.set(Configuration.ZmSection, "configuration-file", "/etc/zm.conf")
+    
+    self.configModified = True
   
   def zmLockFile(self):
     return self.config.get(Configuration.ZmSection, "lock-file")
@@ -32,10 +51,13 @@ class Configuration:
     return self.config.get(Configuration.ZmSection, "configuration-file")
   
   def databaseInitialized(self):
-    self.config.getboolean(Configuration.MySection, "database-initialized")
+    return self.config.getboolean(Configuration.MySection, "database-initialized")
   
   def setDatabaseInitialized(self, initialized):
-    self.config.set(MySection, "database-initialized", initialized)
+    value = "no"
+    if initialized:
+      value = "yes"
+    self.config.set(Configuration.MySection, "database-initialized", value)
     self.configModified = True
   
   def rootUserCheck(self):
@@ -50,6 +72,9 @@ class Configuration:
     
     self.config.set(MySection, "mysql-host", hostname)
     self.configModified = True
+  
+  def mysqlBin(self):
+    return self.config(Configuration.MySection, "mysql-bin")
   
   def checkConfigUpdate(self):
     if self.configModified:

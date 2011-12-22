@@ -53,7 +53,7 @@ def main():
     sys.exit(1)
   
   except ConfigParser.Error as e:
-    print "Error in cofniguration file:", e
+    print "Error in configuration file:", e
     sys.exit(2)
   
   except KeyboardInterrupt:
