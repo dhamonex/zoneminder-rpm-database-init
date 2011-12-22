@@ -28,7 +28,7 @@ class MySQLConfiguration:
       user = self.config.get(MySQLConfiguration.ClientSection, "user")
       password = self.config.get(MySQLConfiguration.ClientSection, "password")
       
-      if user = "" or password = "":
+      if user == "" or password == "":
         self.createConfigFile()
       
     except ConfigParser.Error:
@@ -37,8 +37,9 @@ class MySQLConfiguration:
   def createConfigFile(self):
     self.readConfigIfExists()
     
-    self.config.set(MySQLConfiguration.ClientSection, "root")
-    self.config.set(MySQLConfiguration.ClientSection, self.prompt.askForPassword("Enter mysql root password"))
+    self.config.add_section(MySQLConfiguration.ClientSection)
+    self.config.set(MySQLConfiguration.ClientSection, "user", "root")
+    self.config.set(MySQLConfiguration.ClientSection, "password", self.prompt.askForPassword("Enter mysql root password"))
     
     with open(self.configfile, "w") as openFile:
       self.config.write(openFile)

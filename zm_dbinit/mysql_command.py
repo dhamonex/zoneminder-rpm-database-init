@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 from mysql_configuration import *
-from subprocess import Popen, Pipe
+from subprocess import Popen, PIPE
 
 class MySQLCommandError(Exception):
   def __init__(self, value):
@@ -21,7 +21,7 @@ class MySQLCommand:
     config.checkFile()
     
   def _executeCommand(self, command):
-    process = Popen(command, stderr=Pipe)
+    process = Popen(command, stderr=PIPE)
     process.wait()
     
     if process.returncode != 0:
@@ -36,7 +36,7 @@ class MySQLCommand:
     self._executeCommand(command)
   
   def createDatabase(self, databasefile):
-    if self.prompt.okToContinue("run mysql command to create db as user root?", True):
+    if self.prompt.okToContinue("run mysql command to create db as user root?", True, interaction_required=True):
       self._dumpDataIn(databasefile)
   
   def createZmUser(self):

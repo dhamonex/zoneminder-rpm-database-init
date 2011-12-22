@@ -9,19 +9,14 @@
 #
 # Please submit bugfixes or comments to monex@liquid-co.de
 
-import os.path, os, sys
+import sys
 import argparse
 
 from zm_dbinit.userprompt import UserPrompt
-from zm_dbinit.zm_config_reader import ZmConfigError, ZmConfigFileHandler
 from zm_dbinit.configuration import *
-  
-def initializeDatabase(config):
-  """ The main execute """
-  zmcfg = ZmConfigFileHandler(config.zmConfigFile())
-  zmcfg.readConfigFile()
-  print zmcfg.readOptionValue("ZM_VERSION")
-    
+from zm_dbinit.databaseinit import DatabaseInit  
+from zm_dbinit.zm_config_reader import ZmConfigError
+ 
 def main():
   parser = argparse.ArgumentParser(description = "Handles Database installation and update for ZoneMinder Installations")
   parser.add_argument("-m", "--mysql_host", dest = "mysql_host", default = "localhost", metavar = "MYSQL_HOST",
@@ -37,16 +32,12 @@ def main():
   prompt = UserPrompt(args.non_interactive)
   
   try:
-    print "INFO: when db is correctly installed and you just reinstalled rpm, then answer all questions with 'n'"
     
     with Configuration(args.config_file) as config:
       config.setMysqlHost(args.mysql_host)
       
-      if os.path.isfile(config.zmLockFile()):
-        run_stuff(database_host)
-      else:
-        if prompt.okToContinue("no lockfile found, proceed anyway?", False):
-          initializeDatabase(config)
+    init = DatabaseInit(prompt, config)
+    init.initializeDatabase()
   
   except ZmConfigError as e:
     print "Error in ZoneMinder configuration file: ", e

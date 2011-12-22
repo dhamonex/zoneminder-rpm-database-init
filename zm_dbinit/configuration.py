@@ -38,6 +38,7 @@ class Configuration:
     self.config.set(Configuration.ZmSection, "lock-file", "/usr/share/zm/lock")
     self.config.set(Configuration.ZmSection, "data-install-path", "/usr/share/zm")
     self.config.set(Configuration.ZmSection, "configuration-file", "/etc/zm.conf")
+    self.config.set(Configuration.ZmSection, "zm-version-file", "/usr/share/zm/version")
     
     self.configModified = True
   
@@ -49,6 +50,12 @@ class Configuration:
   
   def zmConfigFile(self):
     return self.config.get(Configuration.ZmSection, "configuration-file")
+  
+  def installedZmVersionFile(self):
+    return self.config.get(Configuration.ZmSection, "version-file")
+  
+  def createDatabaseSqlFile(self):
+    return self.config.get(Configuration.ZmSection, "create-database-sql-file")
   
   def databaseInitialized(self):
     return self.config.getboolean(Configuration.MySection, "database-initialized")
@@ -74,7 +81,7 @@ class Configuration:
     self.configModified = True
   
   def mysqlBin(self):
-    return self.config(Configuration.MySection, "mysql-bin")
+    return self.config.get(Configuration.MySection, "mysql-bin")
   
   def checkConfigUpdate(self):
     if self.configModified:
