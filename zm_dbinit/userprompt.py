@@ -7,7 +7,7 @@ class UserPrompt:
     self.non_interactive = non_interactive
     self.failurecount = 0
   
-  def okToContinue(self, question, defaultAnswer = True):
+  def okToContinue(self, question, defaultAnswer = True, interaction_required = False):
     """ asks the user if it is OK to continue """
     
     if defaultAnswer:
@@ -22,6 +22,10 @@ class UserPrompt:
         answer = "N"
         
       print question + selection + " " + answer
+      
+      if interaction_required:
+        raise RuntimeError("Required user interaction!!")
+      
       return defaultAnswer
       
     proceed = raw_input(question + selection)
