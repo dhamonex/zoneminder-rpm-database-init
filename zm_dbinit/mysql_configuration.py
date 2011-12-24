@@ -49,4 +49,6 @@ class MySQLConfiguration:
     
     with open(self.configfile, "w") as openFile:
       self.config.write(openFile)
+    
+    print "generated/updated ~/.my.cnf"
   

@@ -44,6 +44,10 @@ class UserPrompt:
     
     passwd = getpass.getpass(text + ": ")
     
+    if passwd == "":
+      print "password is empty please choose a non empty password"
+      self.askForPassword(text, retype)
+    
     if retype:
       t_pass = getpass.getpass("retype password: ")
     else:
