@@ -20,6 +20,11 @@ class MySQLConfiguration:
     
     return False
   
+  def backupOldConfigFileIfExists(self):
+    if os.path.isfile(self.configfile):
+      shutil.copy(self.configfile, posix.environ["HOME"]+"/.my.cnf.backup")
+      print "copied old .my.cnf to .my.cnf.backup"
+  
   def checkFile(self):
     if not self.readConfigIfExists():
       self.createConfigFile()
@@ -36,6 +41,7 @@ class MySQLConfiguration:
     
   def createConfigFile(self):
     self.readConfigIfExists()
+    self.backupOldConfigFileIfExists()
     
     self.config.add_section(MySQLConfiguration.ClientSection)
     self.config.set(MySQLConfiguration.ClientSection, "user", "root")
