@@ -38,7 +38,8 @@ class Configuration:
     self.config.set(Configuration.ZmSection, "lock-file", "/usr/share/zm/lock")
     self.config.set(Configuration.ZmSection, "data-install-path", "/usr/share/zm")
     self.config.set(Configuration.ZmSection, "configuration-file", "/etc/zm.conf")
-    self.config.set(Configuration.ZmSection, "zm-version-file", "/usr/share/zm/version")
+    self.config.set(Configuration.ZmSection, "version-file", "/usr/share/zm/version")
+    self.config.set(Configuration.ZmSection, "create-database-sql-file", "/usr/share/zm/db/zm_create.sql")
     
     self.configModified = True
   

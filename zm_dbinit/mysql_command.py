@@ -13,12 +13,9 @@ class MySQLCommand:
   """ Class for interaction with MySQL """
   
   def __init__(self, userprompt, mysqlbin, mysqlhost):
-    config = MySQLConfiguration(userprompt)
     self.mysqlbin = mysqlbin
     self.mysqlhost = mysqlhost
     self.userprompt = userprompt
-    
-    config.checkFile()
     
   def _executeCommand(self, command):
     process = Popen(command, stderr=PIPE)
@@ -35,6 +32,10 @@ class MySQLCommand:
     statement = """echo " """ + command + """ " | """ + self.mysqlbin
     self._executeCommand(command)
   
+  def checkConfiguration(self):
+    config = MySQLConfiguration(self.userprompt)
+    config.checkFile()
+  
   def createDatabase(self, databasefile):
     if self.prompt.okToContinue("run mysql command to create db as user root?", True, interaction_required=True):
       self._dumpDataIn(databasefile)
@@ -43,6 +44,10 @@ class MySQLCommand:
     if self.prompt.okToContinue("create user zm_admin for zoneminder?", True):
       passwd = self.prompt.askForPassword("enter new passwd for user zm_admin", True)
       self._executeStatement("GRANT USAGE ON * . * TO 'zm_admin'@'" + self.mysqlhost + "' IDENTIFIED BY '" + passwd + "' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0; GRANT SELECT , INSERT , UPDATE , DELETE ON zm . * TO 'zm_admin'@'" + self.mysqlhost + "';")
+      
+      return passwd
+    
+    return None
   
   def grantAllPriviligesOnZmDatabase(self, zmdb, zmuser):
     self._executeStatement("GRANT ALL PRIVILEGES ON " + zmdb +". * TO '" + zmuser +"'@'" + self.mysqlhost +"';")

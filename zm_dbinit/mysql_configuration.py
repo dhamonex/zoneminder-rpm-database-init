@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 import ConfigParser
-import posix, os.path
+import posix, os.path, shutil
 
 class MySQLConfiguration:
   """ Handles MySQL Configuration file """
