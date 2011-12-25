@@ -44,6 +44,12 @@ class DatabaseInit:
     
     self.zmconf.writeConfigFile()
     
+    self.config.setDatabaseInitialized(True)
+    
+    if os.path.isfile(self.config.zmLockFile()):
+      print "removing lock file"
+      os.remove(self.config.zmLockFile())
+    
     print "database successfully initialized"
     print "you can now start ZonMinder with rczmstart or systemctl start zm.service"
     
