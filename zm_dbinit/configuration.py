@@ -23,43 +23,38 @@ class Configuration:
   def readConfiguration(self):
     if os.path.isfile(self.filename):
       self.config.read(self.filename)
-    else:
-      self.setDefaults()
   
-  def setDefaults(self):
-    self.config.add_section(Configuration.MySection)
-    self.config.set(Configuration.MySection, "database-initialized", "no")
-    self.config.set(Configuration.MySection, "allow-execution-only-as-root", "yes")
-    self.config.set(Configuration.MySection, "mysql-host", "localhost")
-    self.config.set(Configuration.MySection, "mysql-bin", "/usr/bin/mysql")
+  def _readSetting(self, section, optionName, defaultValue, getFunction=None):
+    if not getFunction:
+      getFunction = self.config.get
+      
+    if not self.config.has_section(section):
+      self.config.add_section(section)
+      self.configModified = True
     
+    if not self.config.has_option(section, optionName):
+      self.config.set(section, optionName, defaultValue)
+      self.configModified = True
     
-    self.config.add_section(Configuration.ZmSection)
-    self.config.set(Configuration.ZmSection, "lock-file", "/usr/share/zm/lock")
-    self.config.set(Configuration.ZmSection, "data-install-path", "/usr/share/zm")
-    self.config.set(Configuration.ZmSection, "configuration-file", "/etc/zm.conf")
-    self.config.set(Configuration.ZmSection, "version-file", "/usr/share/zm/version")
-    self.config.set(Configuration.ZmSection, "create-database-sql-file", "/usr/share/zm/db/zm_create.sql")
-    
-    self.configModified = True
+    return getFunction(section, optionName)
   
   def zmLockFile(self):
-    return self.config.get(Configuration.ZmSection, "lock-file")
+    return self._readSetting(Configuration.ZmSection, "lock-file", "/usr/share/zm/lock")
   
   def zmPath(self):
-    return self.config.get(Configuration.ZmSection, "data-install-path")
+    return self._readSetting(Configuration.ZmSection, "data-install-path", "/usr/share/zm")
   
   def zmConfigFile(self):
-    return self.config.get(Configuration.ZmSection, "configuration-file")
+    return self._readSetting(Configuration.ZmSection, "configuration-file", "/etc/zm.conf")
   
   def installedZmVersionFile(self):
-    return self.config.get(Configuration.ZmSection, "version-file")
+    return self._readSetting(Configuration.ZmSection, "version-file", "/usr/share/zm/version")
   
   def createDatabaseSqlFile(self):
-    return self.config.get(Configuration.ZmSection, "create-database-sql-file")
+    return self._readSetting(Configuration.ZmSection, "create-database-sql-file", "/usr/share/zm/db/zm_create.sql")
   
   def databaseInitialized(self):
-    return self.config.getboolean(Configuration.MySection, "database-initialized")
+    return self._readSetting(Configuration.MySection, "database-initialized", "no", self.config.getboolean)
   
   def setDatabaseInitialized(self, initialized):
     value = "no"
@@ -69,10 +64,10 @@ class Configuration:
     self.configModified = True
   
   def rootUserCheck(self):
-    return self.config.getboolean(Configuration.MySection, "allow-execution-only-as-root")
+    return self._readSetting(Configuration.MySection, "allow-execution-only-as-root", "yes", self.config.getboolean)
   
   def mysqlHost(self):
-    return self.config.get(Configuration.MySection, "mysql-host")
+    return self._readSetting(Configuration.MySection, "mysql-host", "localhost")
   
   def setMysqlHost(self, hostname):
     if self.mysqlHost() == hostname:
@@ -82,7 +77,7 @@ class Configuration:
     self.configModified = True
   
   def mysqlBin(self):
-    return self.config.get(Configuration.MySection, "mysql-bin")
+    return self._readSetting(Configuration.MySection, "mysql-bin", "/usr/bin/mysql")
   
   def checkConfigUpdate(self):
     if self.configModified:
