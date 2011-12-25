@@ -46,16 +46,43 @@ class DatabaseInit:
     
     self.config.setDatabaseInitialized(True)
     
-    if os.path.isfile(self.config.zmLockFile()):
-      print "removing lock file"
-      os.remove(self.config.zmLockFile())
-    
     print "database successfully initialized"
     print "you can now start ZonMinder with rczmstart or systemctl start zm.service"
+  
+  def checkZmPath(self):
+    zmPath = self.zmconf.readOptionValue("ZM_PATH_BUILD")
+    if self.config.zmPath() == zmPath:
+      return
     
+    print "found wrong ZM_PATH_BUILD path in config file could not perform db upgrade"
+    if self.userprompt.okToContinue("should it be updated?", True):
+      self.zmconf.changeConfigValue("ZM_PATH_BUILD", self.config.zmPath())
+      print "ZM_PATH_BUILD set to " + self.config.zmPath()
+    else:
+      print "WARNING: update may fail when ZM_PATH_BUILD not set to " + self.config.zmPath()
 
-  def updateDatabase(self):
-    pass
+  def updateDatabase(self, toVersion, fromVersion):
+    print "when update fails or you are not upgrading from"
+    print "previous rpm version please ensure that the ZM_PATH_BUILD is set to"
+    print self.config.zmPath() + " to find the database update skripts\n"
+    
+    print "when done upgrade using zmupdate.pl before then answer this with n"
+    if not self.userprompt.okToContinue("do you want to perform db update?", True):
+      return
+      
+    self.checkZmPath()
+    
+    zmDbUser = self.zmconf.readOptionValue("ZM_DB_USER")
+    zmDb = self.zmconf.readOptionValue("ZM_DB_NAME")
+    
+    self.mysql.grantAllPriviligesOnZmDatabase(zmDb, zmDbUser)
+    
+    # execute zm_update.pl
+    
+    self.mysql.restoreDefaultPriviligesOnZmDatabase(zmDb, zmDbUser)
+    
+    print "updating config file version string"
+    self.zmconf.changeConfigValue("ZM_VERSION", toVersion)
     
   def rootUserCheck(self):
     if posix.getuid() != 0 and self.config.rootUserCheck():
@@ -71,9 +98,15 @@ class DatabaseInit:
     
     self.mysql.checkConfiguration()
     
-    if self.getInstalledVersion() == self.zmconf.readOptionValue("ZM_VERSION"):
+    zmConfigVersion = self.zmconf.readOptionValue("ZM_VERSION")
+    
+    if self.getInstalledVersion() == zmConfigVersion:
       self.createDatabase()
     else:
-      self.updateDatabase()
+      self.updateDatabase(self.getInstalledVersion(), zmConfigVersion)
+      
+    if os.path.isfile(self.config.zmLockFile()):
+      print "removing lock file"
+      os.remove(self.config.zmLockFile())
     
     
