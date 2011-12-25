@@ -56,7 +56,7 @@ class UserPrompt:
     if passwd != t_pass and self.failurecount < 3:
       print "Password mismatch please try again"
       self.askForPassword(text, retype)
-    else:
+    elif passwd != t_pass:
       raise RuntimeError("Too many user interaction errors")
     
     return passwd

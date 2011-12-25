@@ -38,9 +38,9 @@ class DatabaseInit:
     if self.userprompt.okToContinue("should the config file updated with the new passwd?", True):
       self.zmconf.changeConfigValue("ZM_DB_PASS", password)
       
-    if self.configuration.mysqlHost() != self.zmconf.readOptionValue("ZM_DB_HOST") and \
+    if self.config.mysqlHost() != self.zmconf.readOptionValue("ZM_DB_HOST") and \
     self.userprompt.okToContinue("should the config file updated with new db host?", True):
-      self.zmconf.changeConfigValue("ZM_DB_HOST", self.configuration.mysqlHost())
+      self.zmconf.changeConfigValue("ZM_DB_HOST", self.config.mysqlHost())
     
     self.zmconf.writeConfigFile()
     

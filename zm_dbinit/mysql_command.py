@@ -18,11 +18,11 @@ class MySQLCommand:
     self.userprompt = userprompt
     
   def _executeCommand(self, command):
-    process = Popen(command, stderr=PIPE)
+    process = Popen(command, stderr=PIPE, shell=True)
     process.wait()
     
     if process.returncode != 0:
-      raise MySQLCommandError(process.stderr.read())
+      raise MySQLCommandError(command + " : " + process.stderr.read())
   
   def _dumpDataIn(self, inputFile):
     command = self.mysqlbin + " < " + inputFile
@@ -30,19 +30,19 @@ class MySQLCommand:
   
   def _executeStatement(self, command):
     statement = """echo " """ + command + """ " | """ + self.mysqlbin
-    self._executeCommand(command)
+    self._executeCommand(statement)
   
   def checkConfiguration(self):
     config = MySQLConfiguration(self.userprompt)
     config.checkFile()
   
   def createDatabase(self, databasefile):
-    if self.prompt.okToContinue("run mysql command to create db as user root?", True, interaction_required=True):
+    if self.userprompt.okToContinue("run mysql command to create db as user root?", True, interaction_required=True):
       self._dumpDataIn(databasefile)
   
   def createZmUser(self):
-    if self.prompt.okToContinue("create user zm_admin for zoneminder?", True):
-      passwd = self.prompt.askForPassword("enter new passwd for user zm_admin", True)
+    if self.userprompt.okToContinue("create user zm_admin for zoneminder?", True):
+      passwd = self.userprompt.askForPassword("enter new passwd for user zm_admin", True)
       self._executeStatement("GRANT USAGE ON * . * TO 'zm_admin'@'" + self.mysqlhost + "' IDENTIFIED BY '" + passwd + "' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0; GRANT SELECT , INSERT , UPDATE , DELETE ON zm . * TO 'zm_admin'@'" + self.mysqlhost + "';")
       
       return passwd
