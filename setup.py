@@ -7,5 +7,12 @@ setup(name="zm_database_init",
   author='Dirk Hartmann',
   author_email="monex@liquid-co.de",
   url="https://gitorious.org/zoneminder-rpm-database-init",
-  packages=['zm_dbinit', 'distutils.command'],
+  packages=["zm_dbinit"],
+  package_dir={"zm_dbinit": "src/zm_dbinit"},
+  scripts=["src/scripts/zm_database_init"],
+  data_files=[("/etc", ["config/zm_database_init.conf"])],
+  classifiers=["Development Status :: 4 - Beta", 
+    "Environment :: Console",
+    "License :: GPLv2",
+    "Programming Language :: Python"]
 )
