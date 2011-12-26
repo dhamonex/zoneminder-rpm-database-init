@@ -5,6 +5,7 @@ from userprompt import UserPrompt
 from zm_config_reader import ZmConfigFileHandler
 from configuration import *
 from mysql_command import MySQLCommand
+from zm_update import ZmUpdate, ZmUpdateError
 
 class DatabaseInit:
   def __init__(self, userprompt, config):
@@ -60,6 +61,19 @@ class DatabaseInit:
       print "ZM_PATH_BUILD set to " + self.config.zmPath()
     else:
       print "WARNING: update may fail when ZM_PATH_BUILD not set to " + self.config.zmPath()
+  
+  def executeZmUpdate(self, toVersion, fromVersion):
+    print "updating config file version string"
+    self.zmconf.changeConfigValue("ZM_VERSION", toVersion)
+    self.zmconf.writeConfigFile()
+    
+    update = ZmUpdate(self.config.zmUpdateScriptPath())
+    update.updateFromVersion(fromVersion)
+  
+  def undoConfigFileVersionUpdate(self, version):
+    print "undo config file version string changes"
+    self.zmconf.changeConfigValue("ZM_VERSION", version)
+    self.zmconf.writeConfigFile()
 
   def updateDatabase(self, toVersion, fromVersion):
     print "when update fails or you are not upgrading from"
@@ -75,14 +89,23 @@ class DatabaseInit:
     zmDbUser = self.zmconf.readOptionValue("ZM_DB_USER")
     zmDb = self.zmconf.readOptionValue("ZM_DB_NAME")
     
-    self.mysql.grantAllPriviligesOnZmDatabase(zmDb, zmDbUser)
+    try:
+      self.mysql.grantAllPriviligesOnZmDatabase(zmDb, zmDbUser)
     
-    # execute zm_update.pl
+      # execute zm_update.pl
+      self.executeZmUpdate(toVersion, fromVersion)
     
-    self.mysql.restoreDefaultPriviligesOnZmDatabase(zmDb, zmDbUser)
+      self.mysql.restoreDefaultPriviligesOnZmDatabase(zmDb, zmDbUser)
     
-    print "updating config file version string"
-    self.zmconf.changeConfigValue("ZM_VERSION", toVersion)
+    except Exception:
+      self.undoConfigFileVersionUpdate(fromVersion)
+      self.mysql.restoreDefaultPriviligesOnZmDatabase(zmDb, zmDbUser)
+      raise
+    except KeyboardInterrupt:
+      self.undoConfigFileVersionUpdate(fromVersion)
+      self.mysql.restoreDefaultPriviligesOnZmDatabase(zmDb, zmDbUser)
+      raise
+    
     
   def rootUserCheck(self):
     if posix.getuid() != 0 and self.config.rootUserCheck():

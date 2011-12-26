@@ -53,6 +53,9 @@ class Configuration:
   def createDatabaseSqlFile(self):
     return self._readSetting(Configuration.ZmSection, "create-database-sql-file", "/usr/share/zm/db/zm_create.sql")
   
+  def zmUpdateScriptPath(self):
+    return self._readSetting(Configuration.ZmSection, "path-to-zmupdate", "/usr/bin/zmupdate.pl")
+  
   def databaseInitialized(self):
     return self._readSetting(Configuration.MySection, "database-initialized", "no", self.config.getboolean)
   

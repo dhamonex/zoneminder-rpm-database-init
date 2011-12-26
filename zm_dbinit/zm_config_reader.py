@@ -40,9 +40,9 @@ class ZmConfigFileHandler:
       line, comment = self._lineWithoutComment(line)
       
       if option_s.search(line):
-        line = option + value
+        line = option + value + comment
       
-      self.filecontent.append(line + comment)
+      self.filecontent.append(line + comment + "\n")
   
   def readOptionValue(self, option):
     """ Searches for the given Option and returns it """
@@ -62,11 +62,11 @@ class ZmConfigFileHandler:
     """ Splits comment from line """
     endpos = line.find("#")
     if endpos >= 0:
-      return line[:endpos], line[endpos:]
+      return line[:endpos].strip(), line[endpos:].strip()
     
     endpos = line.find(";")
     if endpos >= 0:
-      return line[:endpos], line[endpos:]
+      return line[:endpos].strip(), line[endpos:].strip()
     
-    return line, ""
+    return line.strip(), ""
  

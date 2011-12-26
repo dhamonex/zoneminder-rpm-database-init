@@ -19,7 +19,7 @@ class MySQLCommand:
     
   def _executeCommand(self, command):
     process = Popen(command, stderr=PIPE, shell=True)
-    process.wait()
+    process.communicate()
     
     if process.returncode != 0:
       raise MySQLCommandError(command + " : " + process.stderr.read())
@@ -50,8 +50,10 @@ class MySQLCommand:
     return None
   
   def grantAllPriviligesOnZmDatabase(self, zmdb, zmuser):
+    print "grant all priviliges on zm database for user " + zmuser
     self._executeStatement("GRANT ALL PRIVILEGES ON " + zmdb +". * TO '" + zmuser +"'@'" + self.mysqlhost +"';")
   
-  def restoreDefaultPriviligesOnZmDatabase(self, zmdb, zmsuser):
-    self._executeStatement("REVOKE ALL PRIVILEGES ON " + zmdb +". * TO '" + zmuser +"'@'" + self.mysqlhost +"'; GRANT SELECT , INSERT , UPDATE , DELETE ON zm . * TO '" + zmuser + "'@'" + self.mysqlhost + "';")
+  def restoreDefaultPriviligesOnZmDatabase(self, zmdb, zmuser):
+    print "restoring decault priviliges on zm database for user " + zmuser
+    self._executeStatement("REVOKE ALL PRIVILEGES ON " + zmdb +". * FROM '" + zmuser +"'@'" + self.mysqlhost +"'; GRANT SELECT , INSERT , UPDATE , DELETE ON zm . * TO '" + zmuser + "'@'" + self.mysqlhost + "';")
     
