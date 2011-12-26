@@ -56,6 +56,9 @@ class Configuration:
   def zmUpdateScriptPath(self):
     return self._readSetting(Configuration.ZmSection, "path-to-zmupdate", "/usr/bin/zmupdate.pl")
   
+  def zmUpdateBackupDatabase(self):
+    return self._readSetting(Configuration.ZmSection, "backup-database-during-zmudpate", "yes", self.config.getboolean)
+  
   def databaseInitialized(self):
     return self._readSetting(Configuration.MySection, "database-initialized", "no", self.config.getboolean)
   

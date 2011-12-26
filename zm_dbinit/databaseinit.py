@@ -67,7 +67,7 @@ class DatabaseInit:
     self.zmconf.changeConfigValue("ZM_VERSION", toVersion)
     self.zmconf.writeConfigFile()
     
-    update = ZmUpdate(self.config.zmUpdateScriptPath())
+    update = ZmUpdate(self.config.zmUpdateScriptPath(), self.config.zmUpdateBackupDatabase())
     update.updateFromVersion(fromVersion)
   
   def undoConfigFileVersionUpdate(self, version):

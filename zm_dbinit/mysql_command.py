@@ -54,6 +54,6 @@ class MySQLCommand:
     self._executeStatement("GRANT ALL PRIVILEGES ON " + zmdb +". * TO '" + zmuser +"'@'" + self.mysqlhost +"';")
   
   def restoreDefaultPriviligesOnZmDatabase(self, zmdb, zmuser):
-    print "restoring decault priviliges on zm database for user " + zmuser
+    print "restoring default priviliges on zm database for user " + zmuser
     self._executeStatement("REVOKE ALL PRIVILEGES ON " + zmdb +". * FROM '" + zmuser +"'@'" + self.mysqlhost +"'; GRANT SELECT , INSERT , UPDATE , DELETE ON zm . * TO '" + zmuser + "'@'" + self.mysqlhost + "';")
     
