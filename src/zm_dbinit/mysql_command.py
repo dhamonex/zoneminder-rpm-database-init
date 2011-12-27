@@ -19,10 +19,10 @@ class MySQLCommand:
     
   def _executeCommand(self, command):
     process = Popen(command, stderr=PIPE, shell=True)
-    process.communicate()
+    out, err = process.communicate()
     
     if process.returncode != 0:
-      raise MySQLCommandError(command + " : " + process.stderr.read())
+      raise MySQLCommandError(command + " : " + err)
   
   def _dumpDataIn(self, inputFile):
     command = self.mysqlbin + " < " + inputFile
