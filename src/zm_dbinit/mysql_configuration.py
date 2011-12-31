@@ -7,9 +7,14 @@ class MySQLConfiguration:
   """ Handles MySQL Configuration file """
   
   ClientSection = "client"
+  ConfigFile = ".my.cnf"
   
   def __init__(self, userprompt):
-    self.configfile = os.path.expanduser("~" + posix.getlogin()) + "/.my.cnf"
+    if posix.environ.has_key("HOME"):
+      self.configfile = posix.environ["HOME"] + "/" + MySQLConfiguration.ConfigFile
+    else:
+      self.configfile = "/root/" + MySQLConfiguration.ConfigFile
+    
     self.config = ConfigParser.SafeConfigParser()
     self.prompt = userprompt
   
@@ -22,8 +27,8 @@ class MySQLConfiguration:
   
   def backupOldConfigFileIfExists(self):
     if os.path.isfile(self.configfile):
-      shutil.copy(self.configfile, os.path.expanduser("~" + posix.getlogin()) + "/.my.cnf.backup")
-      print "copied old .my.cnf to .my.cnf.backup"
+      shutil.copy(self.configfile, posix.environ["HOME"] + "/" + MySQLConfiguration.ConfigFile + ".backup")
+      print "copied old " + MySQLConfiguration.ConfigFile + " to " + MySQLConfiguration.ConfigFile + ".backup"
   
   def checkFile(self):
     if not self.readConfigIfExists():
@@ -50,5 +55,5 @@ class MySQLConfiguration:
     with open(self.configfile, "w") as openFile:
       self.config.write(openFile)
     
-    print "generated/updated ~/.my.cnf"
+    print "generated/updated ~/" + MySQLConfiguration.ConfigFile
   
