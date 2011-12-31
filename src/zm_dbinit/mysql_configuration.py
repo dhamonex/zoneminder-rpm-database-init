@@ -9,7 +9,7 @@ class MySQLConfiguration:
   ClientSection = "client"
   
   def __init__(self, userprompt):
-    self.configfile = posix.environ["HOME"] + "/.my.cnf"
+    self.configfile = os.path.expanduser("~" + posix.getlogin()) + "/.my.cnf"
     self.config = ConfigParser.SafeConfigParser()
     self.prompt = userprompt
   
