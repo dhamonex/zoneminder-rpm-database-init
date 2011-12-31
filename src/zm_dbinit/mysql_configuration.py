@@ -22,7 +22,7 @@ class MySQLConfiguration:
   
   def backupOldConfigFileIfExists(self):
     if os.path.isfile(self.configfile):
-      shutil.copy(self.configfile, posix.environ["HOME"]+"/.my.cnf.backup")
+      shutil.copy(self.configfile, os.path.expanduser("~" + posix.getlogin()) + "/.my.cnf.backup")
       print "copied old .my.cnf to .my.cnf.backup"
   
   def checkFile(self):
