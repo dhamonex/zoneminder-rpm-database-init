@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 import ConfigParser
-import posix, os.path, shutil, os
+import os.path, shutil, os
 
 class MySQLConfiguration:
   """ Handles MySQL Configuration file """
@@ -10,13 +10,12 @@ class MySQLConfiguration:
   ConfigFile = ".my.cnf"
   
   def __init__(self, userprompt):
-    if posix.environ.has_key("HOME"):
-      self.configfile = posix.environ["HOME"] + "/" + MySQLConfiguration.ConfigFile
-    else:
+    if not os.environ.has_key("HOME"):
       # fallback if no environment available
-      self.configfile = "/root/" + MySQLConfiguration.ConfigFile
       # set HOME environment for subprocess calls
-      os.putenv("HOME", "/root")
+      os.environ["HOME"] = "/root"
+    
+    self.configfile = os.environ["HOME"] + "/" + MySQLConfiguration.ConfigFile
     
     self.config = ConfigParser.SafeConfigParser()
     self.prompt = userprompt
@@ -30,7 +29,7 @@ class MySQLConfiguration:
   
   def backupOldConfigFileIfExists(self):
     if os.path.isfile(self.configfile):
-      shutil.copy(self.configfile, posix.environ["HOME"] + "/" + MySQLConfiguration.ConfigFile + ".backup")
+      shutil.copy(self.configfile, os.environ["HOME"] + "/" + MySQLConfiguration.ConfigFile + ".backup")
       print "copied old " + MySQLConfiguration.ConfigFile + " to " + MySQLConfiguration.ConfigFile + ".backup"
   
   def checkFile(self):
