@@ -2,7 +2,7 @@
 from distutils.core import setup
 
 setup(name="zm_database_init",
-  version='2.0.0',
+  version='2.0.1',
   description="A script for ZoneMinder database initialization and upgrade",
   author='Dirk Hartmann',
   author_email="monex@liquid-co.de",
