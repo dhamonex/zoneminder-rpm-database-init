@@ -46,7 +46,7 @@ class UserPrompt:
     
     if passwd == "":
       print "password is empty please choose a non empty password"
-      self.askForPassword(text, retype)
+      return self.askForPassword(text, retype)
     
     if retype:
       t_pass = getpass.getpass("retype password: ")
@@ -55,7 +55,7 @@ class UserPrompt:
     
     if passwd != t_pass and self.failurecount < 3:
       print "Password mismatch please try again"
-      self.askForPassword(text, retype)
+      return self.askForPassword(text, retype)
     elif passwd != t_pass:
       raise RuntimeError("Too many user interaction errors")
     
