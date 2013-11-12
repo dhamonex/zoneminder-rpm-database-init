@@ -50,17 +50,22 @@ class DatabaseInit:
     print "database successfully initialized"
     print "you can now start ZonMinder with rczmstart or systemctl start zm.service"
   
-  def checkZmPath(self):
-    zmPath = self.zmconf.readOptionValue("ZM_PATH_BUILD")
+  def checkZmPath(self, option):
+    if not self.zmconf.hasConfigOption(option):
+      print "configuration has no option " + option
+      if self.userprompt.okToContinue("should it be set to " + self.config.zmPath() + "?", True):
+        self.zmconf.addConfigValue(option, self.config.zmPath(), "path to zm database upgrade sql scripts\nupdated by zm_databse_init")
+    
+    zmPath = self.zmconf.readOptionValue(option)
     if self.config.zmPath() == zmPath:
       return
     
-    print "found wrong ZM_PATH_BUILD path in config file could not perform db upgrade"
+    print "found wrong " + option + " path in config file could not perform db upgrade"
     if self.userprompt.okToContinue("should it be updated?", True):
-      self.zmconf.changeConfigValue("ZM_PATH_BUILD", self.config.zmPath())
-      print "ZM_PATH_BUILD set to " + self.config.zmPath()
+      self.zmconf.changeConfigValue(option, self.config.zmPath())
+      print option + " set to " + self.config.zmPath()
     else:
-      print "WARNING: update may fail when ZM_PATH_BUILD not set to " + self.config.zmPath()
+      print "WARNING: update may fail when " + option + " not set to " + self.config.zmPath()
   
   def executeZmUpdate(self, toVersion, fromVersion):
     print "updating config file version string"
@@ -84,7 +89,8 @@ class DatabaseInit:
     if not self.userprompt.okToContinue("do you want to perform db update?", True):
       return
       
-    self.checkZmPath()
+    self.checkZmPath("ZM_PATH_DATA")
+    self.checkZmPath("ZM_PATH_BUILD")
     
     zmDbUser = self.zmconf.readOptionValue("ZM_DB_USER")
     zmDb = self.zmconf.readOptionValue("ZM_DB_NAME")
