@@ -47,7 +47,7 @@ class ZmConfigFileHandler:
     """ addes the given option to the config file with option comment """
     self.filecontent.append("\n\n")
     if len(comment) > 0:
-      for line in comment.cplitlines():
+      for line in comment.splitlines():
         self.filecontent.append("# " + line)
     
     self.filecontent.append(self._addValueSeparator(option) + value)
