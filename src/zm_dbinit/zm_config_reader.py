@@ -30,8 +30,7 @@ class ZmConfigFileHandler:
   def changeConfigValue(self, option, value):
     """ changes the given option in config file to the new given value """
     option_s = re.compile(option)
-    if option[-1] != "=": # add '=' when missing
-      option += "="
+    option = self._addValueSeparator(option)
     
     config_copy = self.filecontent
     self.filecontent = []
@@ -43,8 +42,25 @@ class ZmConfigFileHandler:
         line = option + value + comment
       
       self.filecontent.append(line + comment + "\n")
+      
+  def addConfigValue(self, option, value, comment=""):
+    """ addes the given option to the config file with option comment """
+    self.filecontent.append("\n\n")
+    if len(comment) > 0:
+      for line in comment.splitlines():
+        self.filecontent.append("# " + line)
+    
+    self.filecontent.append(self._addValueSeparator(option) + value)
+      
+  def hasConfigOption(self, option):
+    """ return true if the configile has the given option """
+    value = self.readOptionValue(option, False)
+    if value == "":
+      return False
+    
+    return True
   
-  def readOptionValue(self, option):
+  def readOptionValue(self, option, raiseException=True):
     """ Searches for the given Option and returns it """
     option_s = re.compile(option + "\s*=\s*(\S+)")
     
@@ -55,7 +71,17 @@ class ZmConfigFileHandler:
       if what:
         return what.group(1).strip()
     
-    raise ZmConfigError("Option not found: " + option)
+    if raiseException:
+      raise ZmConfigError("Option not found: " + option)
+    
+    return ""
+  
+  @staticmethod
+  def _addValueSeparator(option):
+    if option[-1] != "=": # add '=' when missing
+      option += "="
+  
+    return option
   
   @staticmethod
   def _lineWithoutComment(line):
