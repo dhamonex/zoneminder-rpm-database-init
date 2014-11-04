@@ -68,12 +68,13 @@ class DatabaseInit:
       print "WARNING: update may fail when " + option + " not set to " + self.config.zmPath()
   
   def executeZmUpdate(self, toVersion, fromVersion):
+    print "doing update from %s to %s" % (fromVersion, toVersion)
     print "updating config file version string"
     self.zmconf.changeConfigValue("ZM_VERSION", toVersion)
     self.zmconf.writeConfigFile()
     
     update = ZmUpdate(self.config.zmUpdateScriptPath(), self.config.zmUpdateBackupDatabase())
-    update.updateFromVersion(fromVersion)
+    update.updateFromVersion()
   
   def undoConfigFileVersionUpdate(self, version):
     print "undo config file version string changes"

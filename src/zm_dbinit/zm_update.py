@@ -16,9 +16,9 @@ class ZmUpdate:
     self.zmUpdatePath = zmUpdatePath
     self.backup = backupDatabase
   
-  def updateFromVersion(self, fromVersion):
+  def updateFromVersion(self):
     print "invoking zmupdate.pl for database update"
-    process = Popen(self.zmUpdatePath + " -version=" + fromVersion, stderr=PIPE, stdout=PIPE, stdin=PIPE, shell=True)
+    process = Popen(self.zmUpdatePath, stderr=PIPE, stdout=PIPE, stdin=PIPE, shell=True)
     
     interaction = "\nn\n"
     if self.backup:
