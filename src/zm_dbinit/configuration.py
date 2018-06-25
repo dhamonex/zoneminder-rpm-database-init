@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 
-import ConfigParser
+import configparser
 import os.path
 
 class Configuration:
@@ -12,7 +12,7 @@ class Configuration:
   
   def __init__(self, filename):
     self.filename = filename
-    self.config = ConfigParser.SafeConfigParser()
+    self.config = configparser.SafeConfigParser()
     self.configModified = False
     
     self.readConfiguration()
