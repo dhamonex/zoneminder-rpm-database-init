@@ -48,7 +48,7 @@ class DatabaseInit:
     self.config.setDatabaseInitialized(True)
     
     print("database successfully initialized")
-    print("you can now start ZonMinder with rczmstart or systemctl start zm.service")
+    print("you can now start ZonMinder with systemctl start zm.service")
   
   def checkZmPath(self, option):
     if not self.zmconf.hasConfigOption(option):
