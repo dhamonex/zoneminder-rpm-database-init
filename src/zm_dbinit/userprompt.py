@@ -28,7 +28,7 @@ class UserPrompt:
       
       return defaultAnswer
       
-    proceed = raw_input(question + selection)
+    proceed = input(question + selection)
     
     if proceed == "":
       return defaultAnswer
@@ -65,5 +65,5 @@ class UserPrompt:
     if self.non_interactive:
       raise RuntimeError("Asking for password is not allowed in non interactive mode!!")
     
-    return raw_input(text + ": ")
+    return input(text + ": ")
     

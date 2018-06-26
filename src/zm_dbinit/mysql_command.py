@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 
-from mysql_configuration import *
+from .mysql_configuration import *
 from subprocess import Popen, PIPE
 
 class MySQLCommandError(Exception):

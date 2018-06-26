@@ -10,7 +10,7 @@ class MySQLConfiguration:
   ConfigFile = ".my.cnf"
   
   def __init__(self, userprompt):
-    if not os.environ.has_key("HOME"):
+    if "HOME" not in os.environ:
       # fallback if no environment available
       # set HOME environment for subprocess calls
       os.environ["HOME"] = "/root"

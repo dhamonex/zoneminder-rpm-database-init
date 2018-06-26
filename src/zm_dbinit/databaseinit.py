@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os.path, posix
-from userprompt import UserPrompt
-from zm_config_reader import ZmConfigFileHandler
-from configuration import *
-from mysql_command import MySQLCommand
-from zm_update import ZmUpdate, ZmUpdateError
+from .userprompt import UserPrompt
+from .zm_config_reader import ZmConfigFileHandler
+from .configuration import *
+from .mysql_command import MySQLCommand
+from .zm_update import ZmUpdate, ZmUpdateError
 
 class DatabaseInit:
   def __init__(self, userprompt, config):
