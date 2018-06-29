@@ -2,11 +2,11 @@
 from distutils.core import setup
 
 setup(name="zm_database_init",
-  version='2.2.1',
+  version='3.0.0',
   description="A script for ZoneMinder database initialization and upgrade",
   author='Dirk Hartmann',
   author_email="monex@liquid-co.de",
-  url="https://gitorious.org/zoneminder-rpm-database-init",
+  url="https://github.com/dhamonex/zoneminder-rpm-database-init",
   packages=["zm_dbinit"],
   package_dir={"zm_dbinit": "src/zm_dbinit"},
   scripts=["src/scripts/zm_database_init"],

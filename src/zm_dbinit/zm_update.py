@@ -17,7 +17,7 @@ class ZmUpdate:
     self.backup = backupDatabase
   
   def updateFromVersion(self):
-    print "invoking zmupdate.pl for database update"
+    print("invoking zmupdate.pl for database update")
     process = Popen(self.zmUpdatePath, stderr=PIPE, stdout=PIPE, stdin=PIPE, shell=True)
     
     interaction = "\nn\n"
@@ -25,7 +25,7 @@ class ZmUpdate:
       interaction = "\ny\n"
     
     out, err = process.communicate(interaction)
-    print out
+    print(out)
     
     if process.returncode != 0:
       raise ZmUpdateError("Could not update database with zmupdate.pl: " + err)

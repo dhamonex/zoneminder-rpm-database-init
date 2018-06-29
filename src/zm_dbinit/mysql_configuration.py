@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 
-import ConfigParser
+import configparser
 import os.path, shutil, os
 
 class MySQLConfiguration:
@@ -10,14 +10,14 @@ class MySQLConfiguration:
   ConfigFile = ".my.cnf"
   
   def __init__(self, userprompt):
-    if not os.environ.has_key("HOME"):
+    if "HOME" not in os.environ:
       # fallback if no environment available
       # set HOME environment for subprocess calls
       os.environ["HOME"] = "/root"
     
     self.configfile = os.environ["HOME"] + "/" + MySQLConfiguration.ConfigFile
     
-    self.config = ConfigParser.SafeConfigParser()
+    self.config = configparser.SafeConfigParser()
     self.prompt = userprompt
   
   def readConfigIfExists(self):
@@ -30,7 +30,7 @@ class MySQLConfiguration:
   def backupOldConfigFileIfExists(self):
     if os.path.isfile(self.configfile):
       shutil.copy(self.configfile, os.environ["HOME"] + "/" + MySQLConfiguration.ConfigFile + ".backup")
-      print "copied old " + MySQLConfiguration.ConfigFile + " to " + MySQLConfiguration.ConfigFile + ".backup"
+      print("copied old " + MySQLConfiguration.ConfigFile + " to " + MySQLConfiguration.ConfigFile + ".backup")
   
   def checkFile(self):
     if not self.readConfigIfExists():
@@ -43,7 +43,7 @@ class MySQLConfiguration:
       if user == "" or password == "":
         self.createConfigFile()
       
-    except ConfigParser.Error:
+    except configparser.Error:
       self.createConfigFile()
     
   def createConfigFile(self):
@@ -57,5 +57,5 @@ class MySQLConfiguration:
     with open(self.configfile, "w") as openFile:
       self.config.write(openFile)
     
-    print "generated/updated ~/" + MySQLConfiguration.ConfigFile
+    print("generated/updated ~/" + MySQLConfiguration.ConfigFile)
   

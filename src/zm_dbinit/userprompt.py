@@ -21,14 +21,14 @@ class UserPrompt:
       else:
         answer = "N"
         
-      print question + selection + " " + answer
+      print(question + selection + " " + answer)
       
       if interaction_required:
         raise RuntimeError("Required user interaction!!")
       
       return defaultAnswer
       
-    proceed = raw_input(question + selection)
+    proceed = input(question + selection)
     
     if proceed == "":
       return defaultAnswer
@@ -45,7 +45,7 @@ class UserPrompt:
     passwd = getpass.getpass(text + ": ")
     
     if passwd == "":
-      print "password is empty please choose a non empty password"
+      print("password is empty please choose a non empty password")
       return self.askForPassword(text, retype)
     
     if retype:
@@ -54,7 +54,7 @@ class UserPrompt:
       return passwd
     
     if passwd != t_pass and self.failurecount < 3:
-      print "Password mismatch please try again"
+      print("Password mismatch please try again")
       return self.askForPassword(text, retype)
     elif passwd != t_pass:
       raise RuntimeError("Too many user interaction errors")
@@ -65,5 +65,5 @@ class UserPrompt:
     if self.non_interactive:
       raise RuntimeError("Asking for password is not allowed in non interactive mode!!")
     
-    return raw_input(text + ": ")
+    return input(text + ": ")
     

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os.path, posix
-from userprompt import UserPrompt
-from zm_config_reader import ZmConfigFileHandler
-from configuration import *
-from mysql_command import MySQLCommand
-from zm_update import ZmUpdate, ZmUpdateError
+from .userprompt import UserPrompt
+from .zm_config_reader import ZmConfigFileHandler
+from .configuration import *
+from .mysql_command import MySQLCommand
+from .zm_update import ZmUpdate, ZmUpdateError
 
 class DatabaseInit:
   def __init__(self, userprompt, config):
@@ -30,7 +30,7 @@ class DatabaseInit:
   
   def createDatabase(self):
     if self.config.databaseInitialized():
-      print "database is already installed. if you want to recreate the database drop it manually and change the 'database-initialized' configuration option to 'no'"
+      print("database is already installed. if you want to recreate the database drop it manually and change the 'database-initialized' configuration option to 'no'")
       return
     
     self.mysql.createDatabase(self.config.createDatabaseSqlFile())
@@ -47,12 +47,12 @@ class DatabaseInit:
     
     self.config.setDatabaseInitialized(True)
     
-    print "database successfully initialized"
-    print "you can now start ZonMinder with rczmstart or systemctl start zm.service"
+    print("database successfully initialized")
+    print("you can now start ZonMinder with systemctl start zm.service")
   
   def checkZmPath(self, option):
     if not self.zmconf.hasConfigOption(option):
-      print "configuration has no option " + option
+      print("configuration has no option %s" % option)
       if self.userprompt.okToContinue("should it be set to " + self.config.zmPath() + "?", True):
         self.zmconf.addConfigValue(option, self.config.zmPath(), "path to zm database upgrade sql scripts\nupdated by zm_databse_init")
     
@@ -60,16 +60,16 @@ class DatabaseInit:
     if self.config.zmPath() == zmPath:
       return
     
-    print "found wrong " + option + " path in config file could not perform db upgrade"
+    print("found wrong %s path in config file could not perform db upgrade" % option)
     if self.userprompt.okToContinue("should it be updated?", True):
       self.zmconf.changeConfigValue(option, self.config.zmPath())
-      print option + " set to " + self.config.zmPath()
+      print("%s set to %s" % (option, self.config.zmPath()))
     else:
-      print "WARNING: update may fail when " + option + " not set to " + self.config.zmPath()
+      print("WARNING: update may fail when %s not set to %s" % (option, self.config.zmPath()))
   
   def executeZmUpdate(self, toVersion, fromVersion):
-    print "doing update from %s to %s" % (fromVersion, toVersion)
-    print "updating config file version string"
+    print("doing update from %s to %s" % (fromVersion, toVersion))
+    print("updating config file version string")
     self.zmconf.changeConfigValue("ZM_VERSION", toVersion)
     self.zmconf.writeConfigFile()
     
@@ -77,16 +77,16 @@ class DatabaseInit:
     update.updateFromVersion()
   
   def undoConfigFileVersionUpdate(self, version):
-    print "undo config file version string changes"
+    print("undo config file version string changes")
     self.zmconf.changeConfigValue("ZM_VERSION", version)
     self.zmconf.writeConfigFile()
 
   def updateDatabase(self, toVersion, fromVersion):
-    print "when update fails or you are not upgrading from"
-    print "previous rpm version please ensure that the ZM_PATH_BUILD is set to"
-    print self.config.zmPath() + " to find the database update skripts\n"
+    print("when update fails or you are not upgrading from")
+    print("previous rpm version please ensure that the ZM_PATH_BUILD is set to")
+    print(self.config.zmPath() + " to find the database update skripts\n")
     
-    print "when done upgrade using zmupdate.pl before then answer this with n"
+    print("when done upgrade using zmupdate.pl before then answer this with n")
     if not self.userprompt.okToContinue("do you want to perform db update?", True):
       return
       
@@ -119,7 +119,7 @@ class DatabaseInit:
       raise RuntimeError("User root needed to execute database init")
   
   def initializeDatabase(self):
-    print "INFO: when db is correctly installed and you just reinstalled rpm, then answer all questions with 'n'"
+    print("INFO: when db is correctly installed and you just reinstalled rpm, then answer all questions with 'n'")
     
     if not self.checkLockFile():
       return
@@ -136,7 +136,7 @@ class DatabaseInit:
       self.updateDatabase(self.getInstalledVersion(), zmConfigVersion)
       
     if os.path.isfile(self.config.zmLockFile()):
-      print "removing lock file"
+      print("removing lock file")
       os.remove(self.config.zmLockFile())
     
     

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*- 
-import re, string
+import re
+import shutil
 
 class ZmConfigError(Exception):
   def __init__(self, value):
@@ -23,9 +24,15 @@ class ZmConfigFileHandler:
       self.filecontent = openfile.readlines()
   
   def writeConfigFile(self):
-    """ writes changes to the original config file """
+    """ Writes changes to the original config file. Creates also an backup of old file if write fails """
+    self.createConfigFileBackup()
     with open(self.filename, "w") as openfile:
-      openfile.write(string.join(self.filecontent, ""))
+      openfile.write("".join(self.filecontent))
+      
+  def createConfigFileBackup(self):
+    """ Creates an backup of the original config file """
+    backupFile = self.filename + ".orig"
+    shutil.copyfile(self.filename, backupFile)
   
   def changeConfigValue(self, option, value):
     """ changes the given option in config file to the new given value """
