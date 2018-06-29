@@ -84,7 +84,7 @@ class DatabaseInit:
   def updateDatabase(self, toVersion, fromVersion):
     print("when update fails or you are not upgrading from")
     print("previous rpm version please ensure that the ZM_PATH_BUILD is set to")
-    printself.config.zmPath() + " to find the database update skripts\n"
+    print(self.config.zmPath() + " to find the database update skripts\n")
     
     print("when done upgrade using zmupdate.pl before then answer this with n")
     if not self.userprompt.okToContinue("do you want to perform db update?", True):
