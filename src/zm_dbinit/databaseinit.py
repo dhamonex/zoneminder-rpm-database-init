@@ -13,7 +13,7 @@ class DatabaseInit:
     self.config = config
     self.zmconf = ZmConfigFileHandler(config.zmConfigFile())
     self.zmconf.readConfigFile()
-    self.mysql = MySQLCommand(self.userprompt, self.config.mysqlBin(), self.config.mysqlHost())
+    self.mysql = MySQLCommand(self.userprompt, self.config.mysqlBin(), self.config.mysqlHost(), self.config.mysqlConfig())
   
   def checkLockFile(self):
     if os.path.isfile(self.config.zmLockFile()):

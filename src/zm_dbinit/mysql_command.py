@@ -12,13 +12,14 @@ class MySQLCommandError(Exception):
 class MySQLCommand:
   """ Class for interaction with MySQL """
   
-  def __init__(self, userprompt, mysqlbin, mysqlhost):
+  def __init__(self, userprompt, mysqlbin, mysqlhost, mysqlconfig):
     self.mysqlbin = mysqlbin
     self.mysqlhost = mysqlhost
+    self.mysqlconfig = mysqlconfig
     self.userprompt = userprompt
     
   def _executeCommand(self, command):
-    process = Popen(command, stderr=PIPE, shell=True)
+    process = Popen(command, stderr=PIPE, shell=True, encoding="utf8")
     out, err = process.communicate()
     
     if process.returncode != 0:
@@ -33,7 +34,7 @@ class MySQLCommand:
     self._executeCommand(statement)
   
   def checkConfiguration(self):
-    config = MySQLConfiguration(self.userprompt)
+    config = MySQLConfiguration(self.userprompt, self.mysqlconfig)
     config.checkFile()
   
   def createDatabase(self, databasefile):

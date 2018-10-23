@@ -85,6 +85,9 @@ class Configuration:
   def mysqlBin(self):
     return self._readSetting(Configuration.MySection, "mysql-bin", "/usr/bin/mysql")
   
+  def mysqlConfig(self):
+    return self._readSetting(Configuration.MySection, "mysql-config", "/root/.my.cnf")
+  
   def checkConfigUpdate(self):
     if self.configModified:
       with open(self.filename, "w") as f:
