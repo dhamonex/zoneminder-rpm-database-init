@@ -80,6 +80,10 @@ class DatabaseInit:
     print("undo config file version string changes")
     self.zmconf.changeConfigValue("ZM_VERSION", version)
     self.zmconf.writeConfigFile()
+    
+  def warnOldEventsDir(self):
+    if os.path.exists(self.config.oldEventsDir()):
+      print("Found old events dir please check storage settings in web interface!!!")
 
   def updateDatabase(self, toVersion, fromVersion):
     print("when update fails or you are not upgrading from")
@@ -103,6 +107,8 @@ class DatabaseInit:
       self.executeZmUpdate(toVersion, fromVersion)
     
       self.mysql.restoreDefaultPriviligesOnZmDatabase(zmDb, zmDbUser)
+      
+      self.warnOldEventsDir()
     
     except Exception:
       self.undoConfigFileVersionUpdate(fromVersion)

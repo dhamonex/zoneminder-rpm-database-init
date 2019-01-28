@@ -17,7 +17,7 @@ from zm_dbinit.configuration import *
 from zm_dbinit.databaseinit import DatabaseInit  
 from zm_dbinit.zm_config_reader import ZmConfigError
 
-VERSION = "3.0.2"
+VERSION = "3.2.0"
  
 def main():
   parser = argparse.ArgumentParser(description = "Handles Database installation and update for ZoneMinder Installations (Version " + VERSION + ")")

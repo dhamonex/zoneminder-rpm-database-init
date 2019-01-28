@@ -62,6 +62,9 @@ class Configuration:
   def databaseInitialized(self):
     return self._readSetting(Configuration.MySection, "database-initialized", "no", self.config.getboolean)
   
+  def oldEventsDir(self):
+    return self._readSetting(Configuration.ZmSection, "old-events-dir", "/srv/www/htdocs/zm/events")
+  
   def setDatabaseInitialized(self, initialized):
     value = "no"
     if initialized:
