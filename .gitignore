@@ -4,3 +4,4 @@ rpm
 dist
 *.pyc
 *~
+*.kate-swp
