@@ -44,7 +44,7 @@ class MySQLCommand:
   def createZmUser(self):
     if self.userprompt.okToContinue("create user zm_admin for zoneminder?", True):
       passwd = self.userprompt.askForPassword("enter new passwd for user zm_admin", True)
-      self._executeStatement("GRANT USAGE ON * . * TO 'zm_admin'@'" + self.mysqlhost + "' IDENTIFIED BY '" + passwd + "' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0; GRANT SELECT , INSERT , UPDATE , DELETE ON zm . * TO 'zm_admin'@'" + self.mysqlhost + "';")
+      self._executeStatement("GRANT USAGE ON * . * TO 'zm_admin'@'" + self.mysqlhost + "' IDENTIFIED BY '" + passwd + "' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0; GRANT SELECT , INSERT , UPDATE , DELETE , TRIGGER ON zm . * TO 'zm_admin'@'" + self.mysqlhost + "';")
       
       return passwd
     
@@ -56,5 +56,5 @@ class MySQLCommand:
   
   def restoreDefaultPriviligesOnZmDatabase(self, zmdb, zmuser):
     print("restoring default priviliges on zm database for user " + zmuser)
-    self._executeStatement("REVOKE ALL PRIVILEGES ON " + zmdb +". * FROM '" + zmuser +"'@'" + self.mysqlhost +"'; GRANT SELECT , INSERT , UPDATE , DELETE ON zm . * TO '" + zmuser + "'@'" + self.mysqlhost + "';")
+    self._executeStatement("REVOKE ALL PRIVILEGES ON " + zmdb +". * FROM '" + zmuser +"'@'" + self.mysqlhost +"'; GRANT SELECT , INSERT , UPDATE , DELETE, TRIGGER ON zm . * TO '" + zmuser + "'@'" + self.mysqlhost + "';")
     

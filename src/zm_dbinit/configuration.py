@@ -65,6 +65,12 @@ class Configuration:
   def oldEventsDir(self):
     return self._readSetting(Configuration.ZmSection, "old-events-dir", "/srv/www/htdocs/zm/events")
   
+  def newEventsDir(self):
+    return self._readSetting(Configuration.ZmSection, "new-events-dir", "/var/lib/zoneminder/events")
+  
+  def apacheService(self):
+    return self._readSetting(Configuration.MySection, "apache-service", "")
+  
   def setDatabaseInitialized(self, initialized):
     value = "no"
     if initialized:

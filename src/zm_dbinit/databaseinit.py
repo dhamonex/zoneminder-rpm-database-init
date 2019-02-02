@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os.path, posix
+import os.path, posix, subprocess
 from .userprompt import UserPrompt
 from .zm_config_reader import ZmConfigFileHandler
 from .configuration import *
@@ -81,9 +81,19 @@ class DatabaseInit:
     self.zmconf.changeConfigValue("ZM_VERSION", version)
     self.zmconf.writeConfigFile()
     
-  def warnOldEventsDir(self):
-    if os.path.exists(self.config.oldEventsDir()):
-      print("Found old events dir please check storage settings in web interface!!!")
+  def symlinkOldEventsDir(self):
+    if not os.path.exists(self.config.oldEventsDir()):
+      return
+      
+    print("WARNING Found old events dir please check storage settings in web interface!!!")
+    
+    if os.listdir(self.config.newEventsDir()):
+      okToContinue("Please notice that you have to migrate the events manually to the new storage folder", True, True)
+      return
+    
+    os.rmdir(self.config.newEventsDir())
+    os.symlink(self.config.oldEventsDir(), self.config.newEventsDir())
+    print("Symlink from %s to %s created" % (self.config.oldEventsDir(), self.config.newEventsDir()))
 
   def updateDatabase(self, toVersion, fromVersion):
     print("when update fails or you are not upgrading from")
@@ -108,7 +118,7 @@ class DatabaseInit:
     
       self.mysql.restoreDefaultPriviligesOnZmDatabase(zmDb, zmDbUser)
       
-      self.warnOldEventsDir()
+      self.symlinkOldEventsDir()
     
     except Exception:
       self.undoConfigFileVersionUpdate(fromVersion)
@@ -123,6 +133,14 @@ class DatabaseInit:
   def rootUserCheck(self):
     if posix.getuid() != 0 and self.config.rootUserCheck():
       raise RuntimeError("User root needed to execute database init")
+    
+  def restartApache(self):
+    if len(self.config.apacheService()) < 0:
+      print("Skipping apache restart")
+      return
+      
+    subprocess.check_call("systemctl restart " + self.config.apacheService(), shell = True)
+    print("Apache successfully restarted")
   
   def initializeDatabase(self):
     print("INFO: when db is correctly installed and you just reinstalled rpm, then answer all questions with 'n'")
@@ -140,6 +158,8 @@ class DatabaseInit:
       self.createDatabase()
     else:
       self.updateDatabase(self.getInstalledVersion(), zmConfigVersion)
+      
+    self.restartApache()
       
     if os.path.isfile(self.config.zmLockFile()):
       print("removing lock file")
