@@ -18,13 +18,20 @@ class ZmUpdate:
   
   def updateFromVersion(self):
     print("invoking zmupdate.pl for database update")
-    process = Popen(self.zmUpdatePath, stderr=PIPE, stdout=PIPE, stdin=PIPE, shell=True, encoding="utf8")
+    process = Popen(self.zmUpdatePath, stderr=PIPE, stdout=PIPE, stdin=PIPE, shell=True)
     
     interaction = "\nn\n"
     if self.backup:
       interaction = "\ny\n"
     
     out, err = process.communicate(interaction)
+    
+    if isinstance(out, bytes):
+      out = out.decode('utf-8', errors='replace')
+      
+    if isinstance(err, bytes):
+      err = err.decode('utf-8', errors='replace')
+    
     print(out)
     
     if process.returncode != 0:
