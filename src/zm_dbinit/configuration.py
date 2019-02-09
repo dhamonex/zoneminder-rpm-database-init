@@ -12,7 +12,7 @@ class Configuration:
   
   def __init__(self, filename):
     self.filename = filename
-    self.config = configparser.SafeConfigParser()
+    self.config = configparser.ConfigParser()
     self.configModified = False
     
     self.readConfiguration()
