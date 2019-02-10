@@ -24,7 +24,7 @@ class ZmUpdate:
     if self.backup:
       interaction = "\ny\n"
     
-    out, err = process.communicate(interaction)
+    out, err = process.communicate(interaction.encode())
     
     if isinstance(out, bytes):
       out = out.decode('utf-8', errors='replace')
