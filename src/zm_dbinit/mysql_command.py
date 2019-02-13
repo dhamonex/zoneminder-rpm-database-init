@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 from .mysql_configuration import *
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, check_output
 
 class MySQLCommandError(Exception):
   def __init__(self, value):
@@ -54,6 +54,10 @@ class MySQLCommand:
       return passwd
     
     return None
+  
+  def zmDatabaseExists(self, zmdb):
+    result = check_output(self.mysqlbin + """ --skip-column-names -e "SHOW DATABASES LIKE '""" + zmdb + """'" """, shell = True)
+    return result.strip() == zmdb
   
   def grantAllPriviligesOnZmDatabase(self, zmdb, zmuser):
     print("grant all priviliges on zm database for user %s" % zmuser)

@@ -59,9 +59,6 @@ class Configuration:
   def zmUpdateBackupDatabase(self):
     return self._readSetting(Configuration.ZmSection, "backup-database-during-zmudpate", "yes", self.config.getboolean)
   
-  def databaseInitialized(self):
-    return self._readSetting(Configuration.MySection, "database-initialized", "no", self.config.getboolean)
-  
   def oldEventsDir(self):
     return self._readSetting(Configuration.ZmSection, "old-events-dir", "/srv/www/htdocs/zm/events")
   
@@ -70,13 +67,6 @@ class Configuration:
   
   def apacheService(self):
     return self._readSetting(Configuration.MySection, "apache-service", "")
-  
-  def setDatabaseInitialized(self, initialized):
-    value = "no"
-    if initialized:
-      value = "yes"
-    self.config.set(Configuration.MySection, "database-initialized", value)
-    self.configModified = True
   
   def rootUserCheck(self):
     return self._readSetting(Configuration.MySection, "allow-execution-only-as-root", "yes", self.config.getboolean)

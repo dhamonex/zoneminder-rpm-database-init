@@ -29,8 +29,10 @@ class DatabaseInit:
     return version.strip()
   
   def createDatabase(self):
-    if self.config.databaseInitialized():
-      print("database is already installed. if you want to recreate the database drop it manually and change the 'database-initialized' configuration option to 'no'")
+    zmDb = self.zmconf.readOptionValue("ZM_DB_NAME")
+    
+    if self.mysql.zmDatabaseExists(zmDb):
+      print("database is already installed. if you want to recreate the database drop it manually!!")
       return
     
     self.mysql.createDatabase(self.config.createDatabaseSqlFile())
@@ -44,8 +46,6 @@ class DatabaseInit:
       self.zmconf.changeConfigValue("ZM_DB_HOST", self.config.mysqlHost())
     
     self.zmconf.writeConfigFile()
-    
-    self.config.setDatabaseInitialized(True)
     
     print("database successfully initialized")
     print("you can now start ZonMinder with systemctl start zm.service")
