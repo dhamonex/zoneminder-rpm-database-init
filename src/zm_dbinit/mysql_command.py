@@ -57,7 +57,7 @@ class MySQLCommand:
   
   def zmDatabaseExists(self, zmdb):
     result = check_output(self.mysqlbin + """ --skip-column-names -e "SHOW DATABASES LIKE '""" + zmdb + """'" """, shell = True)
-    return result.strip() == zmdb
+    return result.strip().decode() == zmdb
   
   def grantAllPriviligesOnZmDatabase(self, zmdb, zmuser):
     print("grant all priviliges on zm database for user %s" % zmuser)
