@@ -37,10 +37,10 @@ class CreateDatabaseTestCase(unittest.TestCase):
   @patch("zm_dbinit.mysql_command.MySQLCommand", autospec = True)
   def testCreateDatabase(self, createDatabaseMock, userPromptMock, zmConfigMock, configMock):
     createDatabaseMock.createZmUser.return_value = "testpass"
+    createDatabaseMock.zmDatabaseExists.return_value = False
     
     userPromptMock.okToContinue.return_value = True
     
-    configMock.databaseInitialized.return_value = False
     configMock.createDatabaseSqlFile.return_value = self.config.createDatabaseSqlFile()
     configMock.mysqlHost.return_value = self.config.mysqlHost()
     
@@ -58,8 +58,6 @@ class CreateDatabaseTestCase(unittest.TestCase):
     
     zmConfigMock.changeConfigValue.assert_called_once_with("ZM_DB_PASS", "testpass")
     zmConfigMock.writeConfigFile.assert_called_once()
-    
-    configMock.setDatabaseInitialized.assert_called_once_with(True)
     
     
 if __name__ == "__main__":
