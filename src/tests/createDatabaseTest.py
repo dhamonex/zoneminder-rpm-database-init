@@ -17,6 +17,9 @@ class CreateDatabaseTestCase(unittest.TestCase):
     
     self.dbinit = DatabaseInit(self.prompt, self.config)
     
+  def tearDown(self):
+    self.config.configModified = False
+    
   @patch("os.path.isfile")
   def testLockFile(self, isFileMock):
     isFileMock.return_value = True
