@@ -74,6 +74,12 @@ class Configuration:
   def mysqlHost(self):
     return self._readSetting(Configuration.MySection, "mysql-host", "localhost")
   
+  def webPath(self):
+    return self._readSetting(Configuration.ZmSection, "web-path", "/usr/share/zoneminder/www")
+  
+  def cgiPath(self):
+    return self._readSetting(Configuration.ZmSection, "cgi-path", "/usr/lib/zoneminder/cgi-bin")
+  
   def setMysqlHost(self, hostname):
     if self.mysqlHost() == hostname:
       return
