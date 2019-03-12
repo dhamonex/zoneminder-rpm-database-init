@@ -31,7 +31,7 @@ class CreateDatabaseTestCase(unittest.TestCase):
   @patch("os.remove")
   @patch("os.path.isfile")
   @patch("zm_dbinit.mysql_command.MySQLCommand", autospec = True)
-  def testUpdateDatabaseisCalled(self, createDatabaseMock, isFileMock, fileRemoveMock):
+  def testUpdateDatabaseIsCalled(self, createDatabaseMock, isFileMock, fileRemoveMock):
     with patch.object(DatabaseInit, "updateDatabase") as udpateDatabaseMock, \
          patch.object(DatabaseInit, "getInstalledVersion") as getInstallaedVersionMock, \
          patch.object(DatabaseInit, "checkLockFile") as checkLockFileMock, \
@@ -65,6 +65,26 @@ class CreateDatabaseTestCase(unittest.TestCase):
     
     zmConfigMock.changeConfigValue.assert_called_once_with("ZM_PATH_WEB", "/usr/share/zoneminder/www")
     
+    
+  @patch("zm_dbinit.mysql_command.MySQLCommand", autospec = True)
+  def testUpdateDatabase(self, createDatabaseMock):
+    with patch.object(DatabaseInit, "checkZmPath") as checkZmPathMock, \
+         patch.object(DatabaseInit, "checkWebPath") as checkWebPathMock, \
+         patch.object(DatabaseInit, "executeZmUpdate") as executeZmUpdateMock, \
+         patch.object(DatabaseInit, "symlinkOldEventsDir") as symlinkOldEventsDirMock:
+      
+      dbInit = DatabaseInit(self.prompt, self.config)
+      dbInit.mysql = createDatabaseMock
+      
+      dbInit.updateDatabase("1.30.1", "1.30.4")
+      
+      checkZmPathMock.assert_has_calls([call("ZM_PATH_DATA"), call("ZM_PATH_BUILD")])
+      
+      checkWebPathMock.assert_has_calls([call("ZM_PATH_WEB", self.config.webPath()), 
+                                         call("ZM_PATH_CGI", self.config.cgiPath())])
+      
+      executeZmUpdateMock.assert_called_once()
+      symlinkOldEventsDirMock.assert_called_once()
     
 if __name__ == "__main__":
   unittest.main()
