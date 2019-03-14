@@ -66,6 +66,15 @@ class DatabaseInit:
       print("%s set to %s" % (option, self.config.zmPath()))
     else:
       print("WARNING: update may fail when %s not set to %s" % (option, self.config.zmPath()))
+      
+  def checkWebPath(self, option, expectedValue):
+    webPath = self.zmconf.readOptionValue(option)
+    if option == expectedValue:
+      return
+    
+    print("found wrong path for %s -> %s :: expected is %s" % (option, webPath, expectedValue))
+    if self.userprompt.okToContinue("update path?", True):
+      self.zmconf.changeConfigValue(option, expectedValue)
   
   def executeZmUpdate(self, toVersion, fromVersion):
     print("doing update from %s to %s" % (fromVersion, toVersion))
@@ -106,6 +115,8 @@ class DatabaseInit:
       
     self.checkZmPath("ZM_PATH_DATA")
     self.checkZmPath("ZM_PATH_BUILD")
+    self.checkWebPath("ZM_PATH_WEB", self.config.webPath())
+    self.checkWebPath("ZM_PATH_CGI", self.config.cgiPath())
     
     zmDbUser = self.zmconf.readOptionValue("ZM_DB_USER")
     zmDb = self.zmconf.readOptionValue("ZM_DB_NAME")
