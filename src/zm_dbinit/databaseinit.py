@@ -69,7 +69,7 @@ class DatabaseInit:
       
   def checkWebPath(self, option, expectedValue):
     webPath = self.zmconf.readOptionValue(option)
-    if option == expectedValue:
+    if webPath == expectedValue:
       return
     
     print("found wrong path for %s -> %s :: expected is %s" % (option, webPath, expectedValue))
