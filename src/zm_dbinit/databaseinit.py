@@ -115,8 +115,6 @@ class DatabaseInit:
       
     self.checkZmPath("ZM_PATH_DATA")
     self.checkZmPath("ZM_PATH_BUILD")
-    self.checkWebPath("ZM_PATH_WEB", self.config.webPath())
-    self.checkWebPath("ZM_PATH_CGI", self.config.cgiPath())
     
     zmDbUser = self.zmconf.readOptionValue("ZM_DB_USER")
     zmDb = self.zmconf.readOptionValue("ZM_DB_NAME")
@@ -152,6 +150,10 @@ class DatabaseInit:
       
     subprocess.check_call("systemctl restart " + self.config.apacheService(), shell = True)
     print("Apache successfully restarted")
+    
+  def checkImportantConfigPaths(self):
+    self.checkWebPath("ZM_PATH_WEB", self.config.webPath())
+    self.checkWebPath("ZM_PATH_CGI", self.config.cgiPath())
   
   def initializeDatabase(self):
     print("INFO: when db is correctly installed and you just reinstalled rpm, then answer all questions with 'n'")
@@ -162,6 +164,7 @@ class DatabaseInit:
     self.rootUserCheck()
     
     self.mysql.checkConfiguration()
+    self.checkImportantConfigPaths()
     
     zmConfigVersion = self.zmconf.readOptionValue("ZM_VERSION")
     
