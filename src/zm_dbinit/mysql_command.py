@@ -18,11 +18,12 @@ class MySQLCommand:
     self.mysqlconfig = mysqlconfig
     self.userprompt = userprompt
     
-  def _executeCommand(self, command):
+  @staticmethod
+  def _executeCommand(command):
     process = Popen(command, stderr=PIPE, shell=True)
-    out, err = process.communicate()
-    if isinstance(out, bytes):
-      out = out.decode('utf-8', errors='replace')
+    _, err = process.communicate()
+    # if isinstance(out, bytes):
+    #   out = out.decode('utf-8', errors='replace')
       
     if isinstance(err, bytes):
       err = err.decode('utf-8', errors='replace')

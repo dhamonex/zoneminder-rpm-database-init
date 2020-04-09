@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*- 
 
 from subprocess import Popen, PIPE
-import os
 
 class ZmUpdateError(Exception):
   def __init__(self, value):

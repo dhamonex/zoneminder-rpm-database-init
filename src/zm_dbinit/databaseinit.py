@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os.path, posix, subprocess
-from .userprompt import UserPrompt
 from .zm_config_reader import ZmConfigFileHandler
 from .configuration import *
 from .mysql_command import MySQLCommand
-from .zm_update import ZmUpdate, ZmUpdateError
+from .zm_update import ZmUpdate
 
 class DatabaseInit:
   def __init__(self, userprompt, config):
@@ -22,7 +21,6 @@ class DatabaseInit:
       return self.userprompt.okToContinue("no lockfile found, proceed anyway?", False)
   
   def getInstalledVersion(self):
-    version = ""
     with open(self.config.installedZmVersionFile(), "r") as versionFile:
       version = versionFile.read()
     
@@ -97,7 +95,7 @@ class DatabaseInit:
     print("WARNING Found old events dir please check storage settings in web interface!!!")
     
     if os.listdir(self.config.newEventsDir()):
-      okToContinue("Please notice that you have to migrate the events manually to the new storage folder", True, True)
+      self.userprompt.okToContinue("Please notice that you have to migrate the events manually to the new storage folder", True, True)
       return
     
     os.rmdir(self.config.newEventsDir())
