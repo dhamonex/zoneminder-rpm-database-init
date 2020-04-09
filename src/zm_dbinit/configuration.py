@@ -84,7 +84,7 @@ class Configuration:
     if self.mysqlHost() == hostname:
       return
     
-    self.config.set(MySection, "mysql-host", hostname)
+    self.config.set(Configuration.MySection, "mysql-host", hostname)
     self.configModified = True
   
   def mysqlBin(self):
@@ -100,7 +100,7 @@ class Configuration:
       
       self.configModified = False
   
-  def __exit__(self, type, value, traceback):
+  def __exit__(self, exceptionType, exceptionValue, traceback):
     self.checkConfigUpdate()
   
   def __del__(self):
