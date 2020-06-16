@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-import os
 from unittest.mock import patch, call
 
 from zm_dbinit.configuration import Configuration

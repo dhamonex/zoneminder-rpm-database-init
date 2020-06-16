@@ -58,7 +58,21 @@ class CreateDatabaseTestCase(unittest.TestCase):
     
     zmConfigMock.changeConfigValue.assert_called_once_with("ZM_DB_PASS", "testpass")
     zmConfigMock.writeConfigFile.assert_called_once()
+
+  @patch("subprocess.check_call", autospec=True)
+  @patch("zm_dbinit.configuration.Configuration", autospec=True)
+  def testApacheRestartNotCalledWhenNotConfigIsMissing(self, configMock, subprocessMock):
+    configMock.apacheService.return_value = ""
+    self.dbinit.restartApache()
+    subprocessMock.assert_not_called()
     
+  @patch("subprocess.check_call", autospec=True)
+  @patch("zm_dbinit.configuration.Configuration", autospec=True)
+  def testApacheRestartCalledWhenNotEmptyInConfig(self, configMock, subprocessMock):
+    configMock.apacheService.return_value = "apache2"
+    self.dbinit.config = configMock
+    self.dbinit.restartApache()
+    subprocessMock.assert_called_once_with('systemctl restart apache2', shell=True)
     
 if __name__ == "__main__":
   unittest.main()

@@ -142,7 +142,7 @@ class DatabaseInit:
       raise RuntimeError("User root needed to execute database init")
     
   def restartApache(self):
-    if len(self.config.apacheService()) < 0:
+    if len(self.config.apacheService()) <= 0:
       print("Skipping apache restart")
       return
       
